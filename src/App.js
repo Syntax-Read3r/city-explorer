@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
-import Location from './Location/Location'
+import Location from "./Location/Location";
+import ErrorMsg from "./ErrorMsg/ErrorMsg";
 
 class App extends React.Component {
   constructor(props) {
@@ -9,7 +10,9 @@ class App extends React.Component {
       searchQuery: "",
       location: {},
       longitude: 0,
-      latitude: 0
+      latitude: 0,
+      mapUrl: "",
+      apiError: "",
     };
   }
 
@@ -21,27 +24,31 @@ class App extends React.Component {
   };
 
   getLocation = async () => {
-    console.log(process.env.REACT_APP_API_KEY)
-    const API = `https://us1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_API_KEY}&q=${this.state.searchQuery}&format=json`;
-    const res = await axios.get(API);
-    console.log(res);
+    try {
+      const API = `https://us1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_API_KEY}&q=${this.state.searchQuery}&format=json`;
+      const res = await axios.get(API);
+      console.log(res);
 
-     this.setState({ 
-      location: res.data[0],
-      longitude: res.data[0].lon,
-      latitude: res.data[0].lat,
-    });
-    console.log(this.state);
+      // map
+      const map_url = `https://maps.locationiq.com/v3/staticmap?key=${process.env.REACT_APP_API_KEY}&center=${res.data[0].lat},${res.data[0].lon}&zoom=14`;
+
+      this.setState({
+        location: res.data[0],
+        longitude: res.data[0].lon,
+        latitude: res.data[0].lat,
+        mapUrl: map_url,
+        apiError: "",
+      });
+    } catch (err) {
+      this.setState({
+        apiError: err.message,
+        location: {},
+        longitude: 0,
+        latitude: 0,
+        mapUrl: "",
+      });
+    }
   };
-
-  handleMap = async () => {
-    const API = `https://maps.locationiq.com/v3/staticmap?key=${process.env.REACT_APP_API_KEY}&center=${this.state.latitude},${this.state.longitude}&zoom=7`;
-    console.log(API);
-    const res = await axios.get(API);
-    console.log(res);
-  }
-
-
 
   render() {
     return (
@@ -51,14 +58,15 @@ class App extends React.Component {
           placeholder="Serch for a city"
         ></input>
         <button onClick={this.getLocation}>Explore!</button>
-        <button onClick={this.handleMap}>Get Map</button>
         {/* conditionally show the name of the place */}
         {this.state.location.display_name && (
-          <Location location={this.state.location} />
-         
+          <>
+            <Location location={this.state.location} />
+            <img src={this.state.mapUrl} alt="map" />
+          </>
         )}
 
-        <img src="https://maps.locationiq.com/v3/staticmap?key=pk.370c410e39a04083ac561b2cdb2b3add&center=53.7435722,-0.3394758&zoom=7"/> 
+        {this.state.apiError && <ErrorMsg message={this.state.apiError} />}
       </>
     );
   }
