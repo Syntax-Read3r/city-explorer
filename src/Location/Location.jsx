@@ -18,7 +18,7 @@ export default class Location extends React.Component {
                         </tr>
                         <tr>
                             <td>Longitude:</td>
-                            <td>{this.props.location.lat}</td>
+                            <td>{this.props.location.lon}</td>
                         </tr>
                     </tbody>
 
