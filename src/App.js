@@ -2,6 +2,10 @@ import React from "react";
 import axios from "axios";
 import Location from "./Location/Location";
 import ErrorMsg from "./ErrorMsg/ErrorMsg";
+import "./App.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 
 class App extends React.Component {
   constructor(props) {
@@ -53,20 +57,30 @@ class App extends React.Component {
   render() {
     return (
       <>
-        <input
+      <div className="firstInput">
+        
+        <Form.Control
           onChange={this.handleChange}
           placeholder="Serch for a city"
-        ></input>
-        <button onClick={this.getLocation}>Explore!</button>
+           size="lg"
+        ></Form.Control>
+        <Button onClick={this.getLocation} variant='info'>Explore!</Button>
+        
+        </div>
+      <div className="secondInput">
         {/* conditionally show the name of the place */}
+        <div className="fourInput">
         {this.state.location.display_name && (
           <>
             <Location location={this.state.location} />
             <img src={this.state.mapUrl} alt="map" />
           </>
         )}
-
+        </div>
+        <div className="thirdInput">
         {this.state.apiError && <ErrorMsg message={this.state.apiError} />}
+        </div>
+      </div>
       </>
     );
   }
