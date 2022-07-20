@@ -55,7 +55,10 @@ class App extends React.Component {
         {/* conditionally show the name of the place */}
         {this.state.location.display_name && (
           <Location location={this.state.location} />
+         
         )}
+
+        <img src="https://maps.locationiq.com/v3/staticmap?key=pk.370c410e39a04083ac561b2cdb2b3add&center=53.7435722,-0.3394758&zoom=7"/> 
       </>
     );
   }
